@@ -2,9 +2,15 @@ var Shirt = require('../models/shirt');
 
 // Display list of all shirts.
 exports.shirt_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: shirt list');
+    Shirt.find({}, 'name stock')
+    .populate('brand')
+    .populate('size')
+    .exec(function (err, list_shirts) {
+      if (err) { return next(err); }
+      //Successful, so render
+      res.render('shirt_list', { title: 'Shirts List', shirt_list: list_shirts });
+    });
 };
-
 // Display detail page for a specific shirt.
 exports.shirt_detail = function(req, res) {
     res.send('NOT IMPLEMENTED: shirt detail: ' + req.params.id);

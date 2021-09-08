@@ -1,0 +1,19 @@
+<%- include('header'); -%>
+    <%= title %> 
+    <ul>
+        <%
+            shirt_list.forEach(function(shirt) { %>
+                <li> <a href="<% shirt.url %>">
+                    <%= shirt.name %> 
+                    <%= shirt.size.name %> - 
+                    <% shirt.brand.forEach(function(brand) { %>
+                        <%= brand.name %>
+                    <% }); %>
+                    (<%= shirt.stock %>) 
+                    </a>
+                </li>
+            <% });
+        %>
+    </ul>
+
+<%- include('footer'); -%>

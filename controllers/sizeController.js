@@ -2,7 +2,12 @@ var Size = require('../models/size');
 
 // Display list of all sizes.
 exports.size_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: size list');
+    Size.find({}, 'name')
+    .exec(function (err, list_sizes) {
+      if (err) { return next(err); }
+      //Successful, so render
+      res.render('size_list', { title: 'Sizes List', size_list: list_sizes });
+    });
 };
 
 // Display detail page for a specific size.
