@@ -1,4 +1,8 @@
+var Brand = require('../models/brand');
+var Pant = require('../models/pant');
+var Shirt = require('../models/shirt');
 var Size = require('../models/size');
+var async = require('async');
 
 // Display list of all sizes.
 exports.size_list = function(req, res) {
@@ -11,8 +15,35 @@ exports.size_list = function(req, res) {
 };
 
 // Display detail page for a specific size.
-exports.size_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: size detail: ' + req.params.id);
+exports.size_detail = function(req, res, next) {
+
+    async.parallel({
+        size: function(callback) {
+            Size.findById(req.params.id)
+              .exec(callback);
+        },
+
+        size_pants: function(callback) {
+            Pant.find({ 'size': req.params.id })
+              .exec(callback);
+        },
+
+        size_shirts: function(callback) {
+            Shirt.find({ 'size': req.params.id })
+              .exec(callback);
+        },
+
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.size==null) { // No results.
+            var err = new Error('size not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render
+        res.render('size_detail', { title: 'Size Detail', size: results.size, size_pants: results.size_pants, size_shirts: results.size_shirts } );
+    });
+
 };
 
 // Display size create form on GET.

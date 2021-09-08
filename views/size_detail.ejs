@@ -1,4 +1,31 @@
 <%- include('header'); -%>
+    <h1><%= size.name %></h1>
+    <div style='margin-left:20px;margin-top:20px'>
 
+    <h4>Pants</h4>
+    <dl>
+    <%
+        size_pants.forEach(function(pant) { %>
+            <dt>
+                <a href="<%=pant.url%>"> <%=pant.name%> </a>
+                <dd> <%=pant.desc%></dd>
+            </dt>
+        <% });
+    %>
+    </dl>
+
+    <h4>Shirts</h4>
+    <dl>
+        <%
+        size_shirts.forEach(function(shirt) { %>
+            <dt>
+                <a href="<%=shirt.url%>"> <%=shirt.name%> </a>
+                <dd> <%=shirt.desc%></dd>
+            </dt>
+        <% });
+    %>
+    </dl>
+
+    </div>
 
 <%- include('footer'); -%>
