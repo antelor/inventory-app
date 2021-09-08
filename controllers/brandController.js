@@ -30,7 +30,8 @@ exports.brand_list = function(req, res) {
       if (err) { return next(err); }
       //Successful, so render
       res.render('brand_list', { title: 'Brand List', brand_list: list_brands });
-    });};
+    });
+};
 
 // Display detail page for a specific brand.
 exports.brand_detail = function(req, res) {

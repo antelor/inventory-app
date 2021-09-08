@@ -1,0 +1,19 @@
+<%- include('header'); -%>
+    <%= title %> 
+    <ul>
+        <%
+            pant_list.forEach(function(pant) { %>
+                <li> <a href="<% pant.url %>">
+                    <%= pant.name %> 
+                    <%= pant.size.name %> - 
+                    <% pant.brand.forEach(function(brand) { %>
+                        <%= brand.name %>
+                    <% }); %>
+                    (<%= pant.stock %>) 
+                    </a>
+                </li>
+            <% });
+        %>
+    </ul>
+
+<%- include('footer'); -%>

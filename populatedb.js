@@ -183,9 +183,9 @@ function createSizes(cb) {
 
 async.series([
     createBrands,
+    createSizes,
     createPants,
     createShirts,
-    createSizes
 ],
 // Optional callback
 function(err, results) {

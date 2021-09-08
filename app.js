@@ -1,4 +1,5 @@
 //DEBUG=express-locallibrary-tutorial:* npm start
+//node populatedb mongodb://localhost:27017/inventory-app-db
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');

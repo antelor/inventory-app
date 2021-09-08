@@ -2,7 +2,14 @@ var Pant = require('../models/pant');
 
 // Display list of all pants.
 exports.pant_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: pant list');
+    Pant.find({}, 'name stock')
+    .populate('brand')
+    .populate('size')
+    .exec(function (err, list_pants) {
+      if (err) { return next(err); }
+      //Successful, so render
+      res.render('pant_list', { title: 'Pants List', pant_list: list_pants });
+    });
 };
 
 // Display detail page for a specific pant.
