@@ -3,7 +3,7 @@
     <ul>
         <%
             pant_list.forEach(function(pant) { %>
-                <li> <a href="<% pant.url %>">
+                <li> <a href="<%= pant.url %>">
                     <%= pant.name %> 
                     <%= pant.size.name %> - 
                     <% pant.brand.forEach(function(brand) { %>

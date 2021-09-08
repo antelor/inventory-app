@@ -34,8 +34,35 @@ exports.brand_list = function(req, res) {
 };
 
 // Display detail page for a specific brand.
-exports.brand_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand detail: ' + req.params.id);
+exports.brand_detail = function(req, res, next) {
+
+    async.parallel({
+        brand: function(callback) {
+            Brand.findById(req.params.id)
+              .exec(callback);
+        },
+
+        brand_pants: function(callback) {
+            Pant.find({ 'brand': req.params.id })
+              .exec(callback);
+        },
+
+        brand_shirts: function(callback) {
+            Shirt.find({ 'brand': req.params.id })
+              .exec(callback);
+        },
+
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.brand==null) { // No results.
+            var err = new Error('brand not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render
+        res.render('brand_detail', { title: 'Brand Detail', brand: results.brand, brand_pants: results.brand_pants, brand_shirts: results.brand_shirts } );
+    });
+
 };
 
 // Display brand create form on GET.

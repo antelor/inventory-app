@@ -3,7 +3,7 @@
     <ul>
         <%
             shirt_list.forEach(function(shirt) { %>
-                <li> <a href="<% shirt.url %>">
+                <li> <a href="<%= shirt.url %>">
                     <%= shirt.name %> 
                     <%= shirt.size.name %> - 
                     <% shirt.brand.forEach(function(brand) { %>
