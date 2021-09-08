@@ -1,4 +1,4 @@
-var pant = require('../models/pant');
+var Pant = require('../models/pant');
 
 // Display list of all pants.
 exports.pant_list = function(req, res) {

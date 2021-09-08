@@ -1,4 +1,4 @@
-var size = require('../models/size');
+var Size = require('../models/size');
 
 // Display list of all sizes.
 exports.size_list = function(req, res) {

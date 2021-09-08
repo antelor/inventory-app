@@ -1,7 +1,26 @@
-var brand = require('../models/brand');
+var Brand = require('../models/brand');
+var Pant = require('../models/pant');
+var Shirt = require('../models/shirt');
+var Size = require('../models/size');
+var async = require('async');
 
 exports.index = function(req, res) {
-    res.send('NOT IMPLEMENTED: Site Home Page');
+    async.parallel({
+        brand_count: function(callback) {
+            Brand.countDocuments({}, callback);
+        },
+        /*pant_count: function(callback) {
+            Pant.countDocuments({}, callback);
+        },
+        shirt_count: function(callback) {
+            Shirt.countDocuments({}, callback);
+        },
+        size_count: function(callback) {
+            Size.countDocuments({}, callback);
+        }*/
+    }, function(err, results) {
+        res.render('index', { title: 'Inventory App Home', error: err, data: results });
+    });
 };
 
 // Display list of all brands.

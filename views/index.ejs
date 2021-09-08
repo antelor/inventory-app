@@ -1,0 +1,20 @@
+<%- include('header'); -%>
+
+<h1> <%= title %> </h1>
+<p>
+    Proyecto de aplicacion CRUD basica utilizando Node.js para un hipotetico negocio de ropa deportiva.
+    Basado en los tutoriales de The Odin Project y MDN Web Docs
+</p>
+
+<p>
+    El catalogo es el siguiente:
+</p>
+
+<ul>
+    <li>Marcas: <%= data.brand_count %> </li>
+    <li>Pantalones: <%= data.pant_count %> </li>
+    <li>Remeras: <%= data.shirt_count %> </li>
+    <li>Talles: <%= data.size_count %> </li>
+</ul>
+
+<%- include('footer'); -%>

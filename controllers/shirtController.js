@@ -1,4 +1,4 @@
-var shirt = require('../models/shirt');
+var Shirt = require('../models/shirt');
 
 // Display list of all shirts.
 exports.shirt_list = function(req, res) {
