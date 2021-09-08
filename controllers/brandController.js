@@ -9,7 +9,7 @@ exports.index = function(req, res) {
         brand_count: function(callback) {
             Brand.countDocuments({}, callback);
         },
-        /*pant_count: function(callback) {
+        pant_count: function(callback) {
             Pant.countDocuments({}, callback);
         },
         shirt_count: function(callback) {
@@ -17,7 +17,7 @@ exports.index = function(req, res) {
         },
         size_count: function(callback) {
             Size.countDocuments({}, callback);
-        }*/
+        }
     }, function(err, results) {
         res.render('index', { title: 'Inventory App Home', error: err, data: results });
     });
@@ -25,8 +25,12 @@ exports.index = function(req, res) {
 
 // Display list of all brands.
 exports.brand_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand list');
-};
+    Brand.find({}, 'name')
+    .exec(function (err, list_brands) {
+      if (err) { return next(err); }
+      //Successful, so render
+      res.render('brand_list', { title: 'Brand List', brand_list: list_brands });
+    });};
 
 // Display detail page for a specific brand.
 exports.brand_detail = function(req, res) {
