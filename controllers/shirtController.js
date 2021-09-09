@@ -1,4 +1,5 @@
 var Shirt = require('../models/shirt');
+var async = require('async');
 
 // Display list of all shirts.
 exports.shirt_list = function(req, res) {
@@ -11,9 +12,29 @@ exports.shirt_list = function(req, res) {
       res.render('shirt_list', { title: 'Shirts List', shirt_list: list_shirts });
     });
 };
+
 // Display detail page for a specific shirt.
-exports.shirt_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: shirt detail: ' + req.params.id);
+exports.shirt_detail = function(req, res, next) {
+
+    async.series({
+        shirt: function(callback) {
+            Shirt.findById(req.params.id)
+              .populate('brand')
+              .populate('size')
+              .exec(callback);
+        },
+
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.shirt==null) { // No results.
+            var err = new Error('shirt not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render
+        res.render('shirt_detail', { title: results.shirt.name, shirt: results.shirt } );
+    });
+
 };
 
 // Display shirt create form on GET.

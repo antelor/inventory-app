@@ -1,4 +1,16 @@
 <%- include('header'); -%>
-
+    <h1> <%= shirt.name %> </h1>
+    <p> <%= shirt.desc %></p>
+    <p> Marcas: 
+        <ul>
+        <% 
+            shirt.brand.forEach(function(brand) { %> 
+                <li> <a href="<%= brand.url %>"><%= brand.name %></a></li>
+            <% });
+        %>
+        </ul>
+    </p>
+    <p> Talle: <a href="<%=shirt.size.url%> "> <%= shirt.size.name %> </a></p>
+    <p> Stock: <%= shirt.stock %></p>
 
 <%- include('footer'); -%>

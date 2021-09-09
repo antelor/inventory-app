@@ -1,6 +1,4 @@
-var Brand = require('../models/brand');
 var Pant = require('../models/pant');
-var Size = require('../models/size');
 var async = require('async');
 
 // Display list of all pants.
@@ -16,7 +14,7 @@ exports.pant_list = function(req, res) {
 };
 
 
-// Display detail page for a specific size.
+// Display detail page for a specific pant.
 exports.pant_detail = function(req, res, next) {
 
     async.series({
