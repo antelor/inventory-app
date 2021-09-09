@@ -1,4 +1,16 @@
 <%- include('header'); -%>
-
+    <h1> <%= pant.name %> </h1>
+    <p> <%= pant.desc %></p>
+    <p> Marcas: 
+        <ul>
+        <% 
+            pant.brand.forEach(function(brand) { %> 
+                <li> <a href="<%= brand.url %>"><%= brand.name %></a></li>
+            <% });
+        %>
+        </ul>
+    </p>
+    <p> Talle: <a href="<%=pant.size.url%> "> <%= pant.size.name %> </a></p>
+    <p> Stock: <%= pant.stock %></p>
 
 <%- include('footer'); -%>

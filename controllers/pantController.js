@@ -1,4 +1,7 @@
+var Brand = require('../models/brand');
 var Pant = require('../models/pant');
+var Size = require('../models/size');
+var async = require('async');
 
 // Display list of all pants.
 exports.pant_list = function(req, res) {
@@ -12,9 +15,29 @@ exports.pant_list = function(req, res) {
     });
 };
 
-// Display detail page for a specific pant.
-exports.pant_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: pant detail: ' + req.params.id);
+
+// Display detail page for a specific size.
+exports.pant_detail = function(req, res, next) {
+
+    async.series({
+        pant: function(callback) {
+            Pant.findById(req.params.id)
+              .populate('brand')
+              .populate('size')
+              .exec(callback);
+        },
+
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.pant==null) { // No results.
+            var err = new Error('pant not found');
+            err.status = 404;
+            return next(err);
+        }
+        // Successful, so render
+        res.render('pant_detail', { title: results.pant.name, pant: results.pant } );
+    });
+
 };
 
 // Display pant create form on GET.
