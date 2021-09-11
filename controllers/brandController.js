@@ -3,6 +3,7 @@ var Pant = require('../models/pant');
 var Shirt = require('../models/shirt');
 var Size = require('../models/size');
 var async = require('async');
+const { body, validationResult } = require('express-validator');
 
 exports.index = function(req, res) {
     async.parallel({
@@ -67,13 +68,45 @@ exports.brand_detail = function(req, res, next) {
 
 // Display brand create form on GET.
 exports.brand_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand create GET');
+    res.render('brand_form', { title: 'Create Brand', brand: null, errors: [] });
 };
 
-// Handle brand create on POST.
-exports.brand_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand create POST');
-};
+
+// Handle Brand create on POST.
+exports.brand_create_post = [
+    // Validate and sanitize fields.
+    body('name').trim().isLength({ min: 1 }).escape().withMessage('Name must be specified.'),
+    body('desc').trim().isLength({ min: 1 }).escape().withMessage('Desc must be specified.'),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/errors messages.
+            res.render('brand_form', { title: 'Create Brand', brand: req.body, errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid.
+
+            // Create an Brand object with escaped and trimmed data.
+            var brand = new Brand(
+                {
+                    name: req.body.name,
+                    desc: req.body.desc,
+                });
+            
+            brand.save(function (err) {
+                if (err) { return next(err); }
+                // Successful - redirect to new author record.
+                res.redirect(brand.url);
+            });
+        }
+    }
+];
 
 // Display brand delete form on GET.
 exports.brand_delete_get = function(req, res) {
