@@ -1,8 +1,9 @@
-var Brand = require('../models/brand');
+var size = require('../models/size');
 var Pant = require('../models/pant');
 var Shirt = require('../models/shirt');
 var Size = require('../models/size');
 var async = require('async');
+const { body, validationResult } = require('express-validator');
 
 // Display list of all sizes.
 exports.size_list = function(req, res) {
@@ -48,13 +49,45 @@ exports.size_detail = function(req, res, next) {
 
 // Display size create form on GET.
 exports.size_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: size create GET');
+    res.render('size_form', { title: 'Create Size', size: null, errors: [] });
 };
 
+
 // Handle size create on POST.
-exports.size_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: size create POST');
-};
+exports.size_create_post = [
+    // Validate and sanitize fields.
+    body('name').trim().isLength({ min: 1 }).escape().withMessage('Name must be specified.'),
+    body('desc').trim().isLength({ min: 1 }).escape().withMessage('Desc must be specified.'),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/errors messages.
+            res.render('size_form', { title: 'Create size', size: req.body, errors: errors.array() });
+            return;
+        }
+        else {
+            // Data from form is valid.
+
+            // Create an size object with escaped and trimmed data.
+            var size = new Size(
+                {
+                    name: req.body.name,
+                    desc: req.body.desc,
+                });
+            
+            size.save(function (err) {
+                if (err) { return next(err); }
+                // Successful - redirect to new author record.
+                res.redirect(size.url);
+            });
+        }
+    }
+];
 
 // Display size delete form on GET.
 exports.size_delete_get = function(req, res) {
