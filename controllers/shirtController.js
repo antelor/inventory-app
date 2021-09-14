@@ -137,12 +137,35 @@ exports.shirt_create_post = [
 
 // Display shirt delete form on GET.
 exports.shirt_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: shirt delete GET');
+    async.parallel({
+        shirt: function (callback) {
+            Shirt.findById(req.params.id).exec(callback);
+        }
+    }, function (err, results) {
+        if (err) { return next(err); }
+        if (results.shirt == null) {
+            //No results
+            res.redirect('/catalog/shirts');
+        }
+        //Successful, so render
+        res.render('shirt_delete', { title: 'Delete shirt', shirt: results.shirt });
+    });
 };
 
 // Handle shirt delete on POST.
 exports.shirt_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: shirt delete POST');
+    async.parallel({
+        shirt: function (callback) {
+            Shirt.findById(req.body.shirtid).exec(callback);
+        }
+    }, function (err, results) {
+        if (err) { return next(err); }
+        //Success
+        Shirt.findByIdAndDelete(req.body.shirtid, function deleteShirt(err) {
+            if (err) { return next(err); }
+            res.redirect('/catalog/shirts');
+        });
+    });
 };
 
 // Display shirt update form on GET.

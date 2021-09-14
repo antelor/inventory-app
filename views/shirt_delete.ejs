@@ -1,0 +1,15 @@
+<%- include('header'); -%>
+
+    <h1 class="title"> <%= title %> </h1>
+
+    <p>Do you really want to delete this shirt?</p>
+    
+    <form method='POST' action=''>
+        <div class="form-group">
+            <input type='hidden' name='shirtid' required='true' value="<%= shirt._id%>"></input>    
+        </div>
+
+        <button class="btn btn-primary" type="submit">Delete</button>
+    </form>
+
+<%- include('footer'); -%>
