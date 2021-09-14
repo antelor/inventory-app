@@ -101,7 +101,7 @@ exports.brand_create_post = [
             
             brand.save(function (err) {
                 if (err) { return next(err); }
-                // Successful - redirect to new author record.
+                // Successful - redirect to new brand record.
                 res.redirect(brand.url);
             });
         }
@@ -109,13 +109,58 @@ exports.brand_create_post = [
 ];
 
 // Display brand delete form on GET.
-exports.brand_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand delete GET');
+exports.brand_delete_get = function(req, res, next) {
+
+    async.parallel({
+        brand: function(callback) {
+            Brand.findById(req.params.id).exec(callback)
+        },
+        brand_pants: function(callback) {
+            Pant.find({ 'brand': req.params.id }).exec(callback)
+        },
+        brand_shirts: function(callback) {
+            Shirt.find({ 'brand': req.params.id }).exec(callback)
+        },
+    }, function(err, results) {
+        if (err) { return next(err); }
+        if (results.brand==null) { // No results.
+            res.redirect('/catalog/brands');
+        }
+        // Successful, so render.
+        res.render('brand_delete', { title: 'Delete brand', brand: results.brand, brand_pants: results.brand_pants, brand_shirts: results.brand_shirts } );
+    });
+
 };
 
 // Handle brand delete on POST.
 exports.brand_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand delete POST');
+    
+    async.parallel({
+        brand: function (callback) {
+            Brand.findById(req.body.brandid).exec(callback);
+        },
+        brand_pants: function(callback) {
+            Pant.find({ 'brand': req.params.id }).exec(callback)
+        },
+        brand_shirts: function(callback) {
+            Shirt.find({ 'brand': req.params.id }).exec(callback)
+        },
+    }, function (err, results) {
+        if (err) { return next(err); }
+        //Success
+        if (results.brand_pants.length > 0 || results.brand_shirts.length > 0) {
+            //brand has clothes. re-render
+            res.render('brand_delete', { title: 'Delete brand', brand: results.brand, brand_pants: results.brand_pants, brand_shirts: results.brand_shirts });
+            return;
+        }
+        else {
+            //brand has no clothes. delete and redirect to brand page
+            Brand.findByIdAndDelete(req.body.brandid, function deleteBrand(err) {
+                if (err) { return next(err) };
+                res.redirect('/catalog/brands');
+            })
+        }
+    })
 };
 
 // Display brand update form on GET.
