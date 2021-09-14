@@ -242,7 +242,7 @@ exports.shirt_update_post = [
 
         // Create a shirt object with escaped/trimmed data and old id.
         var shirt = new Shirt(
-          { name: req.body.desc,
+          { name: req.body.name,
             desc: req.body.desc,
             stock: req.body.stock,
             brand: (typeof req.body.brand === 'undefined') ? [] : req.body.brand,

@@ -235,7 +235,7 @@ exports.pant_update_post = [
 
         // Create a pant object with escaped/trimmed data and old id.
         var pant = new Pant(
-          { name: req.body.desc,
+          { name: req.body.name,
             desc: req.body.desc,
             stock: req.body.stock,
             brand: (typeof req.body.brand === 'undefined') ? [] : req.body.brand,

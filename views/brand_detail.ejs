@@ -1,5 +1,6 @@
 <%- include('header'); -%>
     <h1><%= brand.name %></h1>
+    <h2><%= brand.desc%></h2>
     <div style='margin-left:20px;margin-top:20px'>
 
     <h4>Pants</h4>
@@ -26,6 +27,7 @@
     %>
     </dl>
     <a href="<%=brand.url + '/delete'%>">Delete</a>
+    <a href="<%=brand.url + '/update'%>">Update</a>
     </div>
 
 <%- include('footer'); -%>

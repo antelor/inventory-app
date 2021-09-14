@@ -163,12 +163,90 @@ exports.brand_delete_post = function(req, res) {
     })
 };
 
+
 // Display brand update form on GET.
-exports.brand_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand update GET');
+exports.brand_update_get = function(req, res, next) {
+
+    // Get brand, brands and sizes for form.
+    async.parallel({
+        brand: function(callback) {
+            Brand.findById(req.params.id)
+              .exec(callback);
+        },
+
+        brand_pants: function(callback) {
+            Pant.find({ 'brand': req.params.id })
+              .exec(callback);
+        },
+
+        brand_shirts: function(callback) {
+            Shirt.find({ 'brand': req.params.id })
+              .exec(callback);
+        },
+
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.brand==null) { // No results.
+                var err = new Error('brand not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+        
+            res.render('brand_form', { title: 'Update brand', brand_shirts: results.brand_shirts, brand_pants: results.brand_pants, brand: results.brand, errors: err });
+        });
+
 };
 
 // Handle brand update on POST.
-exports.brand_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: brand update POST');
-};
+exports.brand_update_post = [
+
+
+    // Validate and sanitise fields.
+    body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('desc', 'Description must not be empty.').trim().isLength({ min: 1 }).escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a brand object with escaped/trimmed data and old id.
+        var brand = new Brand(
+          { name: req.body.name,
+            desc: req.body.desc,
+            _id:req.params.id //This is required, or a new ID will be assigned!
+           });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            // Get all authors and genres for form.
+            async.parallel({
+                brand_pants: function(callback) {
+                    Pant.find({ 'brand': req.params.id })
+                      .exec(callback);
+                },
+        
+                brand_shirts: function(callback) {
+                    Shirt.find({ 'brand': req.params.id })
+                      .exec(callback);
+                },        
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                res.render('brand_form', { title: 'Update brand', brand_shirts: results.brand_shirts, brand_pants: results.brand_pants, brand: results.brand, errors: err });
+            });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            Brand.findByIdAndUpdate(req.params.id, brand, {}, function (err,thebrand) {
+                if (err) { return next(err); }
+                   // Successful - redirect to brand detail page.
+                   res.redirect(thebrand.url);
+                });
+        }
+    }
+];
