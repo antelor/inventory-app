@@ -122,16 +122,16 @@ function createBrands(cb) {
 function createPants(cb) {
     async.parallel([
         function(callback) {
-          pantCreate('lompa nike', 'es un lompa de nike', [brands[0]], sizes[0], '42', callback);
+          pantCreate('Short Negro Nike Icon Clash', '100% poliester negro', [brands[0]], sizes[2], '40', callback);
         },
         function(callback) {
-          pantCreate('lompa adida', 'es un lompa adida', [brands[0]], sizes[0], '42', callback);
+          pantCreate('Calza Negra Nike All-In Tight', '83% poliéster – 17% elastano, negro', [brands[0]], sizes[0], '100', callback);
         },
         function(callback) {
-          pantCreate('lompa nashe nike', 'es un lompa de nike', [brands[0]], sizes[0], '42', callback);
+          pantCreate('Short Blanco Adidas Boca Juniors Visitante 21', 'Blanco', [brands[1]], sizes[1], '42', callback);
         },
         function(callback) {
-          pantCreate('lompa pumita', 'es un lompa de puma', [brands[0]], sizes[0], '42', callback);
+          pantCreate('Calza Negra Puma Modern Sports 78 Tights ', '100% poliester, ajuste entallado, negro', [brands[2]], sizes[3], '42', callback);
         },
         ],
         // optional callback
@@ -141,16 +141,16 @@ function createPants(cb) {
 function createShirts(cb) {
   async.parallel([
       function(callback) {
-        shirtCreate('reme nike', 'es una reme de nike', [brands[0]], sizes[0], '42', callback);
+        shirtCreate('Camiseta Bordó Adidas River Plate Visitante 2019/2020', '100% algodon, bordo', [brands[1]], sizes[0], '80', callback);
       },
       function(callback) {
-        shirtCreate('reme adida', 'es un reme adida', [brands[0]], sizes[0], '42', callback);
+        pantCreate('Remera Roja Adidas Graphic FIFA World Cup Emblem', '100% algodon, roja', [brands[1]], sizes[1], '50', callback);
       },
       function(callback) {
-        shirtCreate('reme nashe nike', 'es un reme de nike', [brands[0]], sizes[0], '42', callback);
+        shirtCreate('Remera Azul Puma Essentials Heather Sportstyle', '100% algodon, azul', [brands[2]], sizes[2], '40', callback);
       },
       function(callback) {
-        shirtCreate('reme pumita', 'es un reme de puma', [brands[0]], sizes[0], '42', callback);
+        shirtCreate('Remera Supreme Streetwear', '100% algodon, blanca', [brands[3]], sizes[1], '40', callback);
       },
       ],
       // optional callback
