@@ -131,12 +131,35 @@ exports.pant_create_post = [
 
 // Display pant delete form on GET.
 exports.pant_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: pant delete GET');
+    async.parallel({
+        pant: function (callback) {
+            Pant.findById(req.params.id).exec(callback);
+        }
+    }, function (err, results) {
+        if (err) { return next(err); }
+        if (results.pant == null) {
+            //No results
+            res.redirect('/catalog/pants');
+        }
+        //Successful, so render
+        res.render('pant_delete', { title: 'Delete pant', pant: results.pant });
+    });
 };
 
 // Handle pant delete on POST.
-exports.pant_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: pant delete POST');
+exports.pant_delete_post = function (req, res) {
+    async.parallel({
+        pant: function (callback) {
+            Pant.findById(req.body.brandid).exec(callback);
+        }
+    }, function (err, results) {
+        if (err) { return next(err); }
+        //Success
+        Pant.findByIdAndDelete(req.body.pantid, function deletePant(err) {
+            if (err) { return next(err) };
+            res.redirect('/catalog/pants');
+        })
+    });
 };
 
 // Display pant update form on GET.
