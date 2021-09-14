@@ -1,5 +1,6 @@
 <%- include('header'); -%>
     <h1><%= size.name %></h1>
+    <h2><%= size.desc%></h2>
     <div style='margin-left:20px;margin-top:20px'>
 
     <h4>Pants</h4>
@@ -26,6 +27,7 @@
     %>
     </dl>
     <a href="<%=size.url + '/delete'%>">Delete</a>
+    <a href="<%=size.url + '/update'%>">Update</a>
     </div>
 
 <%- include('footer'); -%>

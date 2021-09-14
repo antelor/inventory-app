@@ -142,11 +142,88 @@ exports.size_delete_post = function(req, res) {
 };
 
 // Display size update form on GET.
-exports.size_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: size update GET');
+exports.size_update_get = function(req, res, next) {
+
+    // Get size, pants and shirts for form.
+    async.parallel({
+        size: function(callback) {
+            Size.findById(req.params.id)
+              .exec(callback);
+        },
+
+        size_pants: function(callback) {
+            Pant.find({ 'size': req.params.id })
+              .exec(callback);
+        },
+
+        size_shirts: function(callback) {
+            Shirt.find({ 'size': req.params.id })
+              .exec(callback);
+        },
+
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.size==null) { // No results.
+                var err = new Error('size not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+        
+            res.render('size_form', { title: 'Update size', size_shirts: results.size_shirts, size_pants: results.size_pants, size: results.size, errors: err });
+        });
+
 };
 
 // Handle size update on POST.
-exports.size_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: size update POST');
-};
+exports.size_update_post = [
+
+
+    // Validate and sanitise fields.
+    body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('desc', 'Description must not be empty.').trim().isLength({ min: 1 }).escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a size object with escaped/trimmed data and old id.
+        var size = new Size(
+          { name: req.body.name,
+            desc: req.body.desc,
+            _id:req.params.id //This is required, or a new ID will be assigned!
+           });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            // Get all authors and genres for form.
+            async.parallel({
+                size_pants: function(callback) {
+                    Pant.find({ 'size': req.params.id })
+                      .exec(callback);
+                },
+        
+                size_shirts: function(callback) {
+                    Shirt.find({ 'size': req.params.id })
+                      .exec(callback);
+                },        
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                res.render('size_form', { title: 'Update size', size_shirts: results.size_shirts, size_pants: results.size_pants, size: results.size, errors: err });
+            });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            Size.findByIdAndUpdate(req.params.id, size, {}, function (err,thesize) {
+                if (err) { return next(err); }
+                   // Successful - redirect to size detail page.
+                   res.redirect(thesize.url);
+                });
+        }
+    }
+];

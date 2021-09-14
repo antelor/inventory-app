@@ -167,7 +167,7 @@ exports.brand_delete_post = function(req, res) {
 // Display brand update form on GET.
 exports.brand_update_get = function(req, res, next) {
 
-    // Get brand, brands and sizes for form.
+    // Get brand, pants and shirts for form.
     async.parallel({
         brand: function(callback) {
             Brand.findById(req.params.id)
