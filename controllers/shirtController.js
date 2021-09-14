@@ -168,12 +168,130 @@ exports.shirt_delete_post = function(req, res) {
     });
 };
 
+
 // Display shirt update form on GET.
-exports.shirt_update_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: shirt update GET');
+exports.shirt_update_get = function(req, res, next) {
+
+    // Get shirt, brands and sizes for form.
+    async.parallel({
+        shirt: function(callback) {
+            Shirt.findById(req.params.id).populate('brand').populate('size').exec(callback);
+        },
+        brands: function(callback) {
+            Brand.find(callback);
+        },
+        sizes: function(callback) {
+            Size.find(callback);
+        },
+        }, function(err, results) {
+            if (err) { return next(err); }
+            if (results.shirt==null) { // No results.
+                var err = new Error('shirt not found');
+                err.status = 404;
+                return next(err);
+            }
+            // Success.
+        
+            // Mark our selected brands as checked.
+            for (var all_b_iter = 0; all_b_iter < results.brands.length; all_b_iter++) {
+                for (var shirt_b_iter = 0; shirt_b_iter < results.shirt.brand.length; shirt_b_iter++) {
+                    if (results.brands[all_b_iter]._id.toString()===results.shirt.brand[shirt_b_iter]._id.toString()) {
+                        results.brands[all_b_iter].checked = true;
+                    }
+                }
+            }
+
+            // Mark our selected size as checked.
+            for (var all_s_iter = 0; all_s_iter < results.sizes.length; all_s_iter++) {
+                    if (results.sizes[all_s_iter]._id.toString()===results.shirt.size._id.toString()) {
+                        results.sizes[all_s_iter].checked = true;
+                    }
+            };
+        
+            res.render('shirt_form', { title: 'Update shirt', brands: results.brands, sizes: results.sizes, shirt: results.shirt, errors: err });
+        });
+
 };
 
 // Handle shirt update on POST.
-exports.shirt_update_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: shirt update POST');
-};
+exports.shirt_update_post = [
+
+    // Convert the genre to an array
+    (req, res, next) => {
+        if(!(req.body.brand instanceof Array)){
+            if(typeof req.body.brand==='undefined')
+            req.body.brand=[];
+            else
+            req.body.brand=new Array(req.body.brand);
+        }
+        next();
+    },
+
+    // Validate and sanitise fields.
+    body('name', 'Name must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('desc', 'Description must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('stock').isNumeric().withMessage('Only numbers allowed in stock field'),
+    body('brand.*').escape(),
+    body('size.*').escape(),
+
+    // Process request after validation and sanitization.
+    (req, res, next) => {
+
+        // Extract the validation errors from a request.
+        const errors = validationResult(req);
+
+        // Create a shirt object with escaped/trimmed data and old id.
+        var shirt = new Shirt(
+          { name: req.body.desc,
+            desc: req.body.desc,
+            stock: req.body.stock,
+            brand: (typeof req.body.brand === 'undefined') ? [] : req.body.brand,
+            size: req.body.size,
+            _id:req.params.id //This is required, or a new ID will be assigned!
+           });
+
+        if (!errors.isEmpty()) {
+            // There are errors. Render form again with sanitized values/error messages.
+
+            // Get all authors and genres for form.
+            async.parallel({
+                brands: function(callback) {
+                    Brand.find(callback);
+                },
+                sizes: function(callback) {
+                    Size.find(callback);
+                },
+            }, function(err, results) {
+                if (err) { return next(err); }
+
+                
+                // Mark our selected brands as checked.
+                for (var all_b_iter = 0; all_b_iter < results.brands.length; all_b_iter++) {
+                    for (var shirt_b_iter = 0; shirt_b_iter < results.shirt.brand.length; shirt_b_iter++) {
+                        if (results.brands[all_b_iter]._id.toString()===results.shirt.brand[shirt_b_iter]._id.toString()) {
+                            results.brands[all_b_iter].checked = true;
+                        }
+                    }
+                }
+
+                // Mark our selected size as checked.
+                for (var all_s_iter = 0; all_s_iter < results.sizes.length; all_s_iter++) {
+                        if (results.sizes[all_s_iter]._id.toString()===results.shirt.size._id.toString()) {
+                            results.sizes[all_s_iter].checked = true;
+                        }
+                };
+
+                res.render('shirt_form', { title: 'Update shirt', brands: results.brands, sizes: results.sizes, shirt: shirt, errors: errors.array() });
+            });
+            return;
+        }
+        else {
+            // Data from form is valid. Update the record.
+            Shirt.findByIdAndUpdate(req.params.id, shirt, {}, function (err,theshirt) {
+                if (err) { return next(err); }
+                   // Successful - redirect to shirt detail page.
+                   res.redirect(theshirt.url);
+                });
+        }
+    }
+];
