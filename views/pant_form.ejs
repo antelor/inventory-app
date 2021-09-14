@@ -24,7 +24,7 @@
                 brands.forEach( function(brand){
                     %>
                         <div style="display: inline; padding-right: 10px;">
-                            <input class="checkbox-input" type='checkbox' name='brand' value="<%= brand._id%>" id="<%= brand._id%>">
+                            <input class="checkbox-input" type='checkbox' name='brand' value="<%= brand._id%>" id="<%= brand._id%>" <%= brand.checked===true ? "checked" : ""%>>
                             <label for="<%= brand._id%>"> <%= brand.name %></label>
                         </div>
                     <%
@@ -40,7 +40,7 @@
                 sizes.forEach( function(size){
                     %>
                         <div style="display: inline; padding-right: 10px;">
-                            <input class="radio" type='radio' name='size' value="<%= size._id%>" id="<%= size._id%>" checked="<%= size.checked%>">
+                            <input class="radio" type='radio' name='size' value="<%= size._id%>" id="<%= size._id%>" <%= size.checked===true ? "checked" : ""%>>
                             <label for="<%= size._id%>"> <%= size.name %></label>
                         </div>
                     <%
