@@ -1,0 +1,60 @@
+<%- include('header'); -%>
+  <h1 class="title"> <%= title %> </h1>
+
+  <% if(size_pants.length > 0 ){
+        %>
+            <p>Delete the following pants before attempting to delete this size</p> 
+            <div style='margin-left:20px;margin-top:20px'>
+                <h4>Pants</h4>
+                <dl>
+                    <%
+                        size_pants.forEach(function(pant){
+                            %>
+                                <dt>
+                                    <a href="<%= pant.url %>"><%=pant.name%></a>
+                                </dt>
+                                <dd><%=pant.desc%></dd>
+                            <%
+                        })
+                    %>
+                </dl>    
+            </div>
+        <%
+    }
+    if(size_shirts.length > 0 ){
+    %>
+        <p>Delete the following shirts before attempting to delete this size</p> 
+        <div style='margin-left:20px;margin-top:20px'>
+            <h4>Shirts</h4>
+            <dl>
+                <%
+                    size_shirts.forEach(function(shirt){
+                        %>
+                            <dt>
+                                <a href="<%= shirt.url %>"><%=shirt.name%></a>
+                            </dt>
+                            <dd><%=shirt.desc%></dd>
+                        <%
+                    })
+                %>
+            </dl>    
+        </div>
+    <%
+    }
+    if(size_pants.length===0 && size_shirts.length===0){
+        %>
+        <p>Do you really want to delete this size?</p>
+        <form method='POST' action=''>
+            <div class="form-group">
+                <input type='hidden' name='sizeid' required='true' value="<%= size._id%>"></input>    
+            </div>
+
+            <button class="btn btn-primary" type="submit">Delete</button>
+        </form>
+        <%
+    }
+  %>
+
+
+<%- include('footer'); -%>
+

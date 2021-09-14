@@ -91,12 +91,54 @@ exports.size_create_post = [
 
 // Display size delete form on GET.
 exports.size_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: size delete GET');
+
+    async.parallel({
+        size: function (callback) {
+            Size.findById(req.params.id).exec(callback);
+        },
+        size_pants: function (callback) {
+            Pant.find({ 'size': req.params.id }).exec(callback);
+        },
+        size_shirts: function (callback) {
+            Shirt.find({ 'size': req.params.id }).exec(callback);
+        }
+    }, function (err, results) {
+        if (err) { return next(err); }
+        if (results.size == null) {
+            //No results
+            res.redirect('/catalog/sizes');
+        }
+        //Successful, so render.
+        res.render('size_delete', { title: 'Delete size', size: results.size, size_pants:results.size_pants, size_shirts:results.size_shirts });
+    });
+
 };
 
 // Handle size delete on POST.
 exports.size_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: size delete POST');
+    async.parallel({
+        size: function (callback) {
+            Size.findById(req.params.id).exec(callback);
+        },
+        size_pants: function (callback) {
+            Pant.find({ 'size': req.params.id }).exec(callback);
+        },
+        size_shirts: function (callback) {
+            Shirt.find({ 'size': req.params.id }).exec(callback);
+        }
+    }, function (err, results) {
+        if (err) { return next(err); }
+        if (results.size_pants.length > 0 || results.size_shirts.length > 0) {
+            //size has clothes, re-render
+            res.render('size_delete', { title: 'Delete size', size: results.size, size_pants:results.size_pants, size_shirts:results.size_shirts });
+            return;
+        }
+        //Successful, so delete.
+        Size.findByIdAndDelete(req.body.sizeid, function deleteSize(err) {
+            if (err) { return next(err); }
+            res.redirect('/catalog/sizes');
+        });
+    });
 };
 
 // Display size update form on GET.
