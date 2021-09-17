@@ -1,4 +1,4 @@
-Proyecto de aplicacion CRUD basica utilizando Node.js, Express y EJS para un hipotetico negocio de ropa deportiva.
+Proyecto de aplicacion CRUD (REST) utilizando Node.js, Express y EJS para un hipotetico negocio de ropa deportiva.
 
 Modelos:
 - Brands
